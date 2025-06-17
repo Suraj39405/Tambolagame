@@ -1,66 +1,115 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html><html lang="en">
 <head>
-  <title>Tambola Number Caller</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambola Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(to right, #ffecd2, #fcb69f);
-      padding: 30px;
-    }
-    h1 {
-      font-size: 48px;
-      color: #333;
-    }
-    #number {
-      font-size: 120px;
-      margin: 30px 0;
-      color: #28a745;
-    }
-    #calledNumbers {
-      font-size: 18px;
-      max-width: 80%;
-      margin: 20px auto;
-      word-wrap: break-word;
-    }
-    button {
-      padding: 15px 30px;
-      font-size: 20px;
-      background-color: #007bff;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #a100c0;
       color: white;
+      text-align: center;
+    }
+    header {
+      background: url('https://via.placeholder.com/600x200?text=Tambola+Banner') no-repeat center/cover;
+      padding: 30px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      background-color: #d633d6;
+      padding: 10px 0;
+    }
+    .buttons a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 12px;
+      background: #9c27b0;
+      border-radius: 5px;
+    }
+    .status {
+      margin: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .timer {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      font-size: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      padding: 20px;
+    }
+    .grid button {
+      font-size: 18px;
+      padding: 10px;
+      background: white;
+      color: #a100c0;
+      font-weight: bold;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      border-radius: 6px;
     }
-    button:hover {
-      background-color: #0056b3;
+    .search-box {
+      margin: 20px;
     }
-    footer {
-      margin-top: 40px;
-      font-size: 14px;
-      color: #666;
+    .search-box input {
+      padding: 10px;
+      width: 70%;
+      border: none;
+      border-radius: 5px;
+    }
+    .search-box button {
+      padding: 10px;
+      background: red;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
     }
   </style>
 </head>
-<body>  <h1>Tambola Number Caller</h1>
-  <div id="number">--</div>
-  <button onclick="callNext()">Call Next Number</button>
-  <div id="calledNumbers"></div>  <footer>
-    Made by Suraj | Enjoy your Tambola game!
-  </footer>  <script>
-    let numbers = Array.from({ length: 90 }, (_, i) => i + 1);
-    let called = [];
+<body>
+  <header>
+    <h1>KANG LEI TOMBOL AI</h1>
+    <h2>TAMBOLA GAME</h2>
+  </header>  <div class="buttons">
+    <a href="#">Whatsapp</a>
+    <a href="#">Agent list</a>
+    <a href="#">Call</a>
+    <a href="#">Login</a>
+  </div>  <div class="status">GAME IS LIVE</div>  <div class="timer">
+    <div><span id="hours">00</span> Hours</div>
+    <div><span id="minutes">00</span> Minutes</div>
+    <div><span id="seconds">00</span> Seconds</div>
+  </div>  <div class="grid" id="numberGrid"></div>  <div class="search-box">
+    <input type="text" placeholder="Enter keyword">
+    <button>SEARCH</button>
+  </div>  <script>
+    // Countdown to a fixed date/time (e.g., today + 1 hour)
+    let countDownDate = new Date().getTime() + 3600000;
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
+      document.getElementById("hours").textContent = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      document.getElementById("minutes").textContent = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById("seconds").textContent = Math.floor((distance % (1000 * 60)) / 1000);
+    }
+    setInterval(updateTimer, 1000);
 
-    function callNext() {
-      if (numbers.length === 0) {
-        alert("All numbers have been called!");
-        return;
-      }
-      const index = Math.floor(Math.random() * numbers.length);
-      const num = numbers.splice(index, 1)[0];
-      called.push(num);
-      document.getElementById("number").innerText = num;
-      document.getElementById("calledNumbers").innerText = "Called Numbers: " + called.join(", ");
+    // Generate Tambola numbers
+    const grid = document.getElementById("numberGrid");
+    for (let i = 1; i <= 90; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.onclick = () => btn.style.backgroundColor = '#ff4081';
+      grid.appendChild(btn);
     }
   </script></body>
 </html>
