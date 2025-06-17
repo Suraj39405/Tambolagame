@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tambola Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -73,6 +73,35 @@
       border: none;
       border-radius: 5px;
     }
+    .tickets {
+      padding: 10px;
+      background: #fff;
+      color: #000;
+      text-align: left;
+      margin: 20px;
+      border-radius: 10px;
+      max-height: 400px;
+      overflow-y: scroll;
+    }
+    .ticket-entry {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      padding: 5px 0;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #fff;
+      color: #a100c0;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -80,7 +109,7 @@
     <h1>KANG LEI TOMBOL AI</h1>
     <h2>TAMBOLA GAME</h2>
   </header>  <div class="buttons">
-    <a href="#">Whatsapp</a>
+    <a href="https://wa.me/">Whatsapp</a>
     <a href="#">Agent list</a>
     <a href="#">Call</a>
     <a href="#">Login</a>
@@ -88,12 +117,15 @@
     <div><span id="hours">00</span> Hours</div>
     <div><span id="minutes">00</span> Minutes</div>
     <div><span id="seconds">00</span> Seconds</div>
+  </div>  <div class="controls">
+    <button onclick="startCalling()">Play</button>
+    <button onclick="stopCalling()">Pause</button>
   </div>  <div class="grid" id="numberGrid"></div>  <div class="search-box">
     <input type="text" placeholder="Enter keyword">
     <button>SEARCH</button>
-  </div>  <script>
-    // Countdown to a fixed date/time (e.g., today + 1 hour)
-    let countDownDate = new Date().getTime() + 3600000;
+  </div>  <div class="tickets" id="ticketList"></div>  <script>
+    let countDownDate = localStorage.getItem('tambola_start') || (new Date().getTime() + 3600000);
+    countDownDate = parseInt(countDownDate);
     const updateTimer = () => {
       const now = new Date().getTime();
       const distance = countDownDate - now;
@@ -103,13 +135,56 @@
     }
     setInterval(updateTimer, 1000);
 
-    // Generate Tambola numbers
     const grid = document.getElementById("numberGrid");
+    const calledNumbers = new Set();
+    let callerInterval = null;
+
+    function speakNumber(num) {
+      let msg = `Number ${num}`;
+      if (num === 26) msg = "26 is the Republic Day of India";
+      const audio = new SpeechSynthesisUtterance(msg);
+      speechSynthesis.speak(audio);
+    }
+
+    function callNextNumber() {
+      if (calledNumbers.size >= 90) return;
+      let num;
+      do {
+        num = Math.floor(Math.random() * 90) + 1;
+      } while (calledNumbers.has(num));
+      calledNumbers.add(num);
+      const btn = document.querySelector(`.grid button:nth-child(${num})`);
+      if (btn) btn.style.backgroundColor = '#ff4081';
+      speakNumber(num);
+    }
+
+    function startCalling() {
+      if (!callerInterval) {
+        callerInterval = setInterval(callNextNumber, 2000);
+      }
+    }
+
+    function stopCalling() {
+      clearInterval(callerInterval);
+      callerInterval = null;
+    }
+
     for (let i = 1; i <= 90; i++) {
       const btn = document.createElement("button");
       btn.textContent = i;
-      btn.onclick = () => btn.style.backgroundColor = '#ff4081';
       grid.appendChild(btn);
+    }
+
+    const ticketList = document.getElementById("ticketList");
+    for (let i = 1; i <= 600; i++) {
+      const div = document.createElement("div");
+      div.className = "ticket-entry";
+      div.innerHTML = `<strong>Ticket ${i}</strong> <input type='text' placeholder='Unsold' onchange='saveName(${i}, this.value)' value='${localStorage.getItem("ticket_"+i) || "Unsold"}' />`;
+      ticketList.appendChild(div);
+    }
+
+    function saveName(ticketNum, name) {
+      localStorage.setItem("ticket_" + ticketNum, name);
     }
   </script></body>
 </html>
