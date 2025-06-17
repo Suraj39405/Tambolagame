@@ -1,37 +1,66 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
   <title>Tambola Number Caller</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    #number { font-size: 100px; color: green; }
-    #calledNumbers { margin-top: 20px; font-size: 18px; }
-    button { padding: 10px 20px; font-size: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      padding: 30px;
+    }
+    h1 {
+      font-size: 48px;
+      color: #333;
+    }
+    #number {
+      font-size: 120px;
+      margin: 30px 0;
+      color: #28a745;
+    }
+    #calledNumbers {
+      font-size: 18px;
+      max-width: 80%;
+      margin: 20px auto;
+      word-wrap: break-word;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #666;
+    }
   </style>
 </head>
-<body>
+<body>  <h1>Tambola Number Caller</h1>
+  <div id="number">--</div>
+  <button onclick="callNext()">Call Next Number</button>
+  <div id="calledNumbers"></div>  <footer>
+    Made by Suraj | Enjoy your Tambola game!
+  </footer>  <script>
+    let numbers = Array.from({ length: 90 }, (_, i) => i + 1);
+    let called = [];
 
-<h1>Tambola Number Caller</h1>
-<div id="number">--</div>
-<button onclick="callNext()">Call Next Number</button>
-<div id="calledNumbers"></div>
-
-<script>
-  let numbers = Array.from({length: 90}, (_, i) => i + 1);
-  let called = [];
-
-  function callNext() {
-    if (numbers.length === 0) {
-      alert("All numbers called!");
-      return;
+    function callNext() {
+      if (numbers.length === 0) {
+        alert("All numbers have been called!");
+        return;
+      }
+      const index = Math.floor(Math.random() * numbers.length);
+      const num = numbers.splice(index, 1)[0];
+      called.push(num);
+      document.getElementById("number").innerText = num;
+      document.getElementById("calledNumbers").innerText = "Called Numbers: " + called.join(", ");
     }
-    const index = Math.floor(Math.random() * numbers.length);
-    const num = numbers.splice(index, 1)[0];
-    called.push(num);
-    document.getElementById("number").innerText = num;
-    document.getElementById("calledNumbers").innerText = "Called: " + called.join(", ");
-  }
-</script>
-
-</body>
+  </script></body>
 </html>
