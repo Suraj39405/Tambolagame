@@ -1,190 +1,97 @@
-<!DOCTYPE html><html lang="en">
+import zipfile
+import os
+
+# Re-create files and folders due to environment reset
+base_path = "/mnt/data/tambola_houshi_site"
+os.makedirs(base_path, exist_ok=True)
+
+# Sample HTML file
+html_content = """
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tambola Game</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #a100c0;
-      color: white;
-      text-align: center;
-    }
-    header {
-      background: url('https://via.placeholder.com/600x200?text=Tambola+Banner') no-repeat center/cover;
-      padding: 30px 0;
-    }
-    .buttons {
-      display: flex;
-      justify-content: space-around;
-      background-color: #d633d6;
-      padding: 10px 0;
-    }
-    .buttons a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      padding: 8px 12px;
-      background: #9c27b0;
-      border-radius: 5px;
-    }
-    .status {
-      margin: 20px 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .timer {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      font-size: 20px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 10px;
-      padding: 20px;
-    }
-    .grid button {
-      font-size: 18px;
-      padding: 10px;
-      background: white;
-      color: #a100c0;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-    }
-    .search-box {
-      margin: 20px;
-    }
-    .search-box input {
-      padding: 10px;
-      width: 70%;
-      border: none;
-      border-radius: 5px;
-    }
-    .search-box button {
-      padding: 10px;
-      background: red;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-    }
-    .tickets {
-      padding: 10px;
-      background: #fff;
-      color: #000;
-      text-align: left;
-      margin: 20px;
-      border-radius: 10px;
-      max-height: 400px;
-      overflow-y: scroll;
-    }
-    .ticket-entry {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #ccc;
-      padding: 5px 0;
-    }
-    .controls {
-      margin-top: 10px;
-    }
-    .controls button {
-      padding: 10px 20px;
-      margin: 5px;
-      background: #fff;
-      color: #a100c0;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
+  <title>Tambola Houshi</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1>KANG LEI TOMBOL AI</h1>
-    <h2>TAMBOLA GAME</h2>
-  </header>  <div class="buttons">
-    <a href="https://wa.me/">Whatsapp</a>
-    <a href="#">Agent list</a>
-    <a href="#">Call</a>
-    <a href="#">Login</a>
-  </div>  <div class="status">GAME IS LIVE</div>  <div class="timer">
-    <div><span id="hours">00</span> Hours</div>
-    <div><span id="minutes">00</span> Minutes</div>
-    <div><span id="seconds">00</span> Seconds</div>
-  </div>  <div class="controls">
-    <button onclick="startCalling()">Play</button>
-    <button onclick="stopCalling()">Pause</button>
-  </div>  <div class="grid" id="numberGrid"></div>  <div class="search-box">
-    <input type="text" placeholder="Enter keyword">
-    <button>SEARCH</button>
-  </div>  <div class="tickets" id="ticketList"></div>  <script>
-    let countDownDate = localStorage.getItem('tambola_start') || (new Date().getTime() + 3600000);
-    countDownDate = parseInt(countDownDate);
-    const updateTimer = () => {
-      const now = new Date().getTime();
-      const distance = countDownDate - now;
-      document.getElementById("hours").textContent = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      document.getElementById("minutes").textContent = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      document.getElementById("seconds").textContent = Math.floor((distance % (1000 * 60)) / 1000);
-    }
-    setInterval(updateTimer, 1000);
-
-    const grid = document.getElementById("numberGrid");
-    const calledNumbers = new Set();
-    let callerInterval = null;
-
-    function speakNumber(num) {
-      let msg = `Number ${num}`;
-      if (num === 26) msg = "26 is the Republic Day of India";
-      const audio = new SpeechSynthesisUtterance(msg);
-      speechSynthesis.speak(audio);
-    }
-
-    function callNextNumber() {
-      if (calledNumbers.size >= 90) return;
-      let num;
-      do {
-        num = Math.floor(Math.random() * 90) + 1;
-      } while (calledNumbers.has(num));
-      calledNumbers.add(num);
-      const btn = document.querySelector(`.grid button:nth-child(${num})`);
-      if (btn) btn.style.backgroundColor = '#ff4081';
-      speakNumber(num);
-    }
-
-    function startCalling() {
-      if (!callerInterval) {
-        callerInterval = setInterval(callNextNumber, 2000);
-      }
-    }
-
-    function stopCalling() {
-      clearInterval(callerInterval);
-      callerInterval = null;
-    }
-
-    for (let i = 1; i <= 90; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      grid.appendChild(btn);
-    }
-
-    const ticketList = document.getElementById("ticketList");
-    for (let i = 1; i <= 600; i++) {
-      const div = document.createElement("div");
-      div.className = "ticket-entry";
-      div.innerHTML = `<strong>Ticket ${i}</strong> <input type='text' placeholder='Unsold' onchange='saveName(${i}, this.value)' value='${localStorage.getItem("ticket_"+i) || "Unsold"}' />`;
-      ticketList.appendChild(div);
-    }
-
-    function saveName(ticketNum, name) {
-      localStorage.setItem("ticket_" + ticketNum, name);
-    }
-  </script></body>
+    <h1>Tambola Houshi</h1>
+    <p class="tagline">Play. Win. Celebrate.</p>
+  </header>
+  <main>
+    <section id="tickets-section">
+      <h2>Tickets</h2>
+      <div id="ticket-grid"></div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
 </html>
+"""
+
+css_content = """
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f3e8ff;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background-color: #6a0dad;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+.tagline {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+}
+#tickets-section {
+  padding: 1rem;
+}
+#ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.ticket {
+  background: white;
+  border: 2px solid #6a0dad;
+  padding: 1rem;
+  border-radius: 10px;
+}
+"""
+
+js_content = """
+document.addEventListener("DOMContentLoaded", () => {
+  const ticketGrid = document.getElementById("ticket-grid");
+  for (let i = 1; i <= 20; i++) {
+    const ticket = document.createElement("div");
+    ticket.className = "ticket";
+    ticket.innerHTML = `<h3>Ticket #${i}</h3><p>Status: <strong>UNSOLD</strong></p>`;
+    ticketGrid.appendChild(ticket);
+  }
+});
+"""
+
+# Write files
+with open(os.path.join(base_path, "index.html"), "w") as f:
+    f.write(html_content)
+with open(os.path.join(base_path, "style.css"), "w") as f:
+    f.write(css_content)
+with open(os.path.join(base_path, "script.js"), "w") as f:
+    f.write(js_content)
+
+# Create zip file
+zip_path = "/mnt/data/Tambola_Houshi_Website.zip"
+with zipfile.ZipFile(zip_path, "w") as zipf:
+    for foldername, subfolders, filenames in os.walk(base_path):
+        for filename in filenames:
+            file_path = os.path.join(foldername, filename)
+            arcname = os.path.relpath(file_path, base_path)
+            zipf.write(file_path, arcname)
+
+zip_path  # Provide the final zip file path to user
+
